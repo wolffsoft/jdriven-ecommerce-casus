@@ -1,0 +1,12 @@
+{
+  "type": "record",
+  "name": "ProductDeletedEvent",
+  "namespace": "com.wolffsoft.catalog.events",
+  "doc": "Emitted when a product is deleted",
+  "fields": [
+    { "name": "eventId", "type": { "type": "string", "avro.java.string": "String" } },
+    { "name": "eventVersion", "type": "int" },
+    { "name": "occurredAt", "type": { "type": "long", "logicalType": "timestamp-millis" } },
+    { "name": "productId", "type": { "type": "string", "avro.java.string": "String" } }
+  ]
+}
