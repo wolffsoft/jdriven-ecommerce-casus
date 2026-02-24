@@ -113,15 +113,6 @@ public class ElasticsearchSearchProjectionService implements SearchProjectionSer
         }
     }
 
-    private String buildAttributesText(Map<String, String> attributes) {
-        if (attributes == null || attributes.isEmpty()) {
-            return "";
-        }
-        return attributes.entrySet().stream()
-                .map(e -> e.getKey() + " " + e.getValue())
-                .collect(Collectors.joining(" "));
-    }
-
     private Map<String, Object> buildUpdateProduct(ProductUpdatedEvent event) {
         Map<String, Object> updateProduct = new HashMap<>();
         Optional<ProductUpdatedEvent> optionalEvent = Optional.ofNullable(event);
