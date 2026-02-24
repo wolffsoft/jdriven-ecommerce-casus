@@ -1,0 +1,119 @@
+spring:
+  config:
+    activate:
+      on-profile: local
+
+  application:
+    name: jdriven-ecommerce
+
+  datasource:
+    jdbcUrl: jdbc:postgresql://localhost:5432/catalog
+    username: catalog_user
+    password: test1234
+
+  flyway:
+    enabled: true
+    jdbcUrl: ${spring.datasource.jdbcUrl}
+    username: admin_user
+    password: test123456
+    locations: classpath:db/migration,classpath:db/migration-local
+
+  jpa:
+    open-in-view: false
+    hibernate:
+      ddl-auto: validate
+    properties:
+      hibernate:
+        jdbc:
+          time_zone: UTC
+
+  kafka:
+    bootstrap-servers: localhost:9092
+
+    properties:
+      schema.registry.url: http://localhost:8081
+      specific.avro.reader: true
+      auto.register.schemas: true
+      value.subject.name.strategy: io.confluent.kafka.serializers.subject.TopicRecordNameStrategy
+      acks: all
+      retries: 10
+      max.in.flight.requests.per.connection: 5
+      delivery.timeout.ms: 120000
+      request.timeout.ms: 30000
+
+    producer:
+      key-serializer: org.apache.kafka.common.serialization.StringSerializer
+      value-serializer: io.confluent.kafka.serializers.KafkaAvroSerializer
+      compression-type: snappy
+
+    consumer:
+      group-id: product-catalog-service
+      auto-offset-reset: earliest
+      enable-auto-commit: false
+      key-deserializer: org.apache.kafka.common.serialization.StringDeserializer
+      value-deserializer: io.confluent.kafka.serializers.KafkaAvroDeserializer
+      properties:
+        specific.avro.reader: true
+
+    listener:
+      ack-mode: manual
+      type: single
+      concurrency: 3
+
+  task:
+    scheduling:
+      enabled: true
+
+  main:
+    allow-bean-definition-overriding: false
+
+server:
+  port: 8080
+  shutdown: graceful
+
+spring.lifecycle:
+  timeout-per-shutdown-phase: 30s
+
+logging:
+  level:
+    root: INFO
+    org.flywaydb: INFO
+
+outbox:
+  publisher:
+    delay-ms: 500
+    batch-size: 100
+    stale-lock-max-age-seconds: 300
+
+akhq:
+  connections:
+    local:
+      properties:
+        bootstrap.servers: "localhost:9092"
+      deserialization:
+        key:
+          serde: String
+        value:
+          serde: Avro
+      serialization:
+        key:
+          serde: String
+        value:
+          serde: Avro
+      schema-registry:
+        url: "http://localhost:8081"
+
+app:
+  kafka:
+    topics:
+      product-events: product-events
+      product-events-dlt: product-events.DLT
+
+  search:
+    index:
+      name: products
+
+  elasticsearch:
+    url: http://localhost:9200
+    username: catalog_app
+    password: catalog_app_pw

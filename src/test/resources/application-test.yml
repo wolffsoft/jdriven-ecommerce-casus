@@ -1,0 +1,100 @@
+spring:
+  config:
+    activate:
+      on-profile: test
+
+  application:
+    name: jdriven-ecommerce
+
+  datasource:
+    jdbcUrl: jdbc:tc:postgresql:16:///catalog
+    username: catalog_user
+    password: test1234
+
+  flyway:
+    enabled: true
+    jdbcUrl: ${spring.datasource.jdbcUrl}
+    username: admin_user
+    password: test123456
+    locations: classpath:db/migration,classpath:db/migration-local
+
+  jpa:
+    open-in-view: false
+    hibernate:
+      ddl-auto: validate
+    properties:
+      hibernate:
+        jdbc:
+          time_zone: UTC
+
+  kafka:
+    bootstrap-servers: http://localhost:9092
+
+    properties:
+      schema.registry.url: mock://schema-registry
+      specific.avro.reader: true
+      auto.register.schemas: true
+      value.subject.name.strategy: io.confluent.kafka.serializers.subject.TopicRecordNameStrategy
+      acks: all
+      retries: 0
+      max.in.flight.requests.per.connection: 5
+      delivery.timeout.ms: 120000
+      request.timeout.ms: 30000
+
+    producer:
+      key-serializer: org.apache.kafka.common.serialization.StringSerializer
+      value-serializer: io.confluent.kafka.serializers.KafkaAvroSerializer
+      compression-type: snappy
+
+    consumer:
+      group-id: test-product-catalog-service
+      auto-offset-reset: earliest
+      enable-auto-commit: false
+      key-deserializer: org.apache.kafka.common.serialization.StringDeserializer
+      value-deserializer: io.confluent.kafka.serializers.KafkaAvroDeserializer
+      properties:
+        specific.avro.reader: true
+
+    listener:
+      ack-mode: manual
+      type: single
+      concurrency: 1
+
+  task:
+    scheduling:
+      enabled: false
+
+  main:
+    allow-bean-definition-overriding: true
+
+server:
+  port: 0
+  shutdown: graceful
+
+spring.lifecycle:
+  timeout-per-shutdown-phase: 5s
+
+logging:
+  level:
+    root: WARN
+
+outbox:
+  publisher:
+    delay-ms: 10000
+    batch-size: 50
+    stale-lock-max-age-seconds: 300
+
+app:
+  kafka:
+    topics:
+      product-events: product-events
+      product-events-dlt: product-events.DLT
+
+  search:
+    index:
+      name: products
+
+  elasticsearch:
+    url: http://localhost:9200
+    username: test
+    password: test
