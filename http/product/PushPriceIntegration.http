@@ -3,7 +3,7 @@ Content-Type: application/json
 
 {
   "requestId": "req-0004",
-  "productId": "b9153eae-ae78-4458-a5e9-888d834cfbdc",
+  "productId": "f3dfaef1-9dab-45d7-abec-c8fdd4f1fe74",
   "priceInCents": 123456789,
   "currency": "EUR",
   "effectiveAt": "2026-02-23T21:05:00Z",
