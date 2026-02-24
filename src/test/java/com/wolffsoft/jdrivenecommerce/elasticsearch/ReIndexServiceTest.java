@@ -4,9 +4,7 @@ import co.elastic.clients.elasticsearch.ElasticsearchClient;
 import co.elastic.clients.elasticsearch.core.BulkRequest;
 import co.elastic.clients.elasticsearch.core.BulkResponse;
 import co.elastic.clients.elasticsearch.indices.ElasticsearchIndicesClient;
-import co.elastic.clients.elasticsearch.indices.RefreshRequest;
 import co.elastic.clients.elasticsearch.indices.RefreshResponse;
-import co.elastic.clients.util.ObjectBuilder;
 import com.wolffsoft.jdrivenecommerce.repository.ProductRepository;
 import com.wolffsoft.jdrivenecommerce.repository.entity.ProductEntity;
 import com.wolffsoft.jdrivenecommerce.service.elasticsearch.ReIndexService;
@@ -32,7 +30,10 @@ import java.util.function.Function;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.Mockito.*;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.reset;
+import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.when;
 
 @ExtendWith(MockitoExtension.class)
 class ReIndexServiceTest {

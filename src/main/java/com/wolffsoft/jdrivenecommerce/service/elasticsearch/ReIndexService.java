@@ -2,6 +2,7 @@ package com.wolffsoft.jdrivenecommerce.service.elasticsearch;
 
 import co.elastic.clients.elasticsearch.ElasticsearchClient;
 import co.elastic.clients.elasticsearch.core.BulkRequest;
+import co.elastic.clients.elasticsearch.core.BulkResponse;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.wolffsoft.jdrivenecommerce.elasticsearch.ProductSearchDocument;
 import com.wolffsoft.jdrivenecommerce.repository.ProductRepository;
@@ -12,10 +13,10 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
 
-import java.math.BigDecimal;
-import java.math.RoundingMode;
 import java.util.Map;
 import java.util.stream.Collectors;
+
+import static com.wolffsoft.jdrivenecommerce.util.ElasticSearchUtil.buildPriceText;
 
 @Service
 @RequiredArgsConstructor
@@ -92,19 +93,6 @@ public class ReIndexService {
         return attributes.entrySet().stream()
                 .map(e -> e.getKey() + " " + e.getValue())
                 .collect(Collectors.joining(" "));
-    }
-
-    private static String buildPriceText(Long priceInCents, String currency) {
-        if (priceInCents == null) {
-            return currency == null ? "" : currency;
-        }
-
-        BigDecimal major = BigDecimal.valueOf(priceInCents).movePointLeft(2).setScale(2, RoundingMode.HALF_UP);
-        String centsToken = String.valueOf(priceInCents);
-        String majorToken = major.toPlainString();
-        String currencyToken = currency == null ? "" : currency;
-
-        return (centsToken + " " + majorToken + " " + currencyToken).trim();
     }
 
     public record ReindexResult(long indexedCount) {}

@@ -75,8 +75,7 @@ public class ProductSearchService {
             String indexName,
             int safeSize,
             String trimmedQuery,
-            String cursor
-    ) {
+            String cursor) {
         List<FieldValue> searchAfter = StringUtils.isBlank(cursor)
                 ? List.of()
                 : cursorCodec.decodeCursorToSearchAfter(cursor);

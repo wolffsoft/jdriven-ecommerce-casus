@@ -28,9 +28,12 @@ import java.util.Optional;
 import java.util.UUID;
 
 import static com.wolffsoft.jdrivenecommerce.util.ProductEventConstants.EVENT_TYPE_PRODUCT_PRICE_UPDATED_V1;
-import static org.assertj.core.api.Assertions.*;
+import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.Mockito.*;
+import static org.mockito.Mockito.never;
+import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.when;
 
 @ExtendWith(MockitoExtension.class)
 class PriceSyncServiceTest {

@@ -47,14 +47,6 @@ public final class JsonUtil {
         }
     }
 
-    public static <T> T fromJson(String json, Class<T> clazz) {
-        try {
-            return OBJECT_MAPPER.readValue(json, clazz);
-        } catch (JsonProcessingException ex) {
-            throw new IllegalStateException("Failed to deserialize JSON", ex);
-        }
-    }
-
     // -----------------------------
     // Avro JSON (for SpecificRecord)
     // -----------------------------

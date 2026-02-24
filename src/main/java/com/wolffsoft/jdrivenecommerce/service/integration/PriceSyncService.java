@@ -101,9 +101,10 @@ public class PriceSyncService {
                 ));
     }
 
-    private ProductPriceUpdatedEvent buildPriceUpdatedEvent(ProductEntity product,
-                                                            long oldPriceCents,
-                                                            long newPriceCents) {
+    private ProductPriceUpdatedEvent buildPriceUpdatedEvent(
+            ProductEntity product,
+            long oldPriceCents,
+            long newPriceCents) {
         return new ProductPriceUpdatedEvent(
                 UUID.randomUUID().toString(),
                 EVENT_VERSION,

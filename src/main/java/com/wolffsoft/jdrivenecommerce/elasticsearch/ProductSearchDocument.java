@@ -11,5 +11,5 @@ public record ProductSearchDocument(
         String currencyText,
         String priceText,
         Map<String, String> attributes,
-        String attributesText) {
-}
+        String attributesText
+) {}

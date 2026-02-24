@@ -23,12 +23,13 @@ import org.springframework.transaction.annotation.Transactional;
 import java.time.Instant;
 import java.util.Map;
 import java.util.UUID;
+import java.util.function.Consumer;
 
 import static com.wolffsoft.jdrivenecommerce.outbox.OutboxEventStatus.NEW;
 import static com.wolffsoft.jdrivenecommerce.util.ProductEventConstants.EVENT_TYPE_PRODUCT_CREATED_V1;
+import static com.wolffsoft.jdrivenecommerce.util.ProductEventConstants.EVENT_TYPE_PRODUCT_DELETED_V1;
 import static com.wolffsoft.jdrivenecommerce.util.ProductEventConstants.EVENT_TYPE_PRODUCT_PRICE_UPDATED_V1;
 import static com.wolffsoft.jdrivenecommerce.util.ProductEventConstants.EVENT_TYPE_PRODUCT_UPDATED_V1;
-import static com.wolffsoft.jdrivenecommerce.util.ProductEventConstants.EVENT_TYPE_PRODUCT_DELETED_V1;
 
 @Service
 @RequiredArgsConstructor

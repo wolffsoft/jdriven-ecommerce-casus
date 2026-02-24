@@ -24,5 +24,4 @@ public class ProductSearchController {
         String trimmedQuery = query.trim();
         return productSearchService.search(trimmedQuery, size, cursor);
     }
-
 }

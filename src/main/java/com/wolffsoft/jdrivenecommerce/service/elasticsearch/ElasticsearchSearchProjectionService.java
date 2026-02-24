@@ -138,6 +138,15 @@ public class ElasticsearchSearchProjectionService implements SearchProjectionSer
         return updateProduct;
     }
 
+    private String buildAttributesText(Map<String, String> attributes) {
+        if (attributes == null || attributes.isEmpty()) {
+            return "";
+        }
+        return attributes.entrySet().stream()
+                .map(e -> e.getKey() + " " + e.getValue())
+                .collect(Collectors.joining(" "));
+    }
+
     private Map<String, Object> createUpdateProductPrice(ProductPriceUpdatedEvent event) {
         return Map.of(
                 "priceInCents", event.getNewPriceInCents(),
@@ -145,19 +154,5 @@ public class ElasticsearchSearchProjectionService implements SearchProjectionSer
                 "currencyText", event.getCurrency() == null ? "" : event.getCurrency(),
                 "priceText", buildPriceText(event.getNewPriceInCents(), event.getCurrency())
         );
-    }
-
-    private static String buildPriceText(Long priceInCents, String currency) {
-        if (priceInCents == null) {
-            return currency == null ? "" : currency;
-        }
-
-        // Provide a few text tokens so single-field search can match "1999", "19.99", and currency.
-        BigDecimal major = BigDecimal.valueOf(priceInCents).movePointLeft(2).setScale(2, RoundingMode.HALF_UP);
-        String centsToken = String.valueOf(priceInCents);
-        String majorToken = major.toPlainString();
-        String currencyToken = currency == null ? "" : currency;
-
-        return (centsToken + " " + majorToken + " " + currencyToken).trim();
     }
 }

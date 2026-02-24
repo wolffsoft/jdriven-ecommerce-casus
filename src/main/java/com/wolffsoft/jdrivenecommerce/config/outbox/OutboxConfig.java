@@ -20,7 +20,6 @@ public class OutboxConfig {
     public static final String EVENT_PRODUCT_PRICE_UPDATED_V1 = "product.price-updated.v1";
     public static final String EVENT_PRODUCT_DELETED_V1 = "product.deleted.v1";
 
-
     @Bean
     public String outboxInstanceId(@Value("${spring.application.name}") String appName) {
         return appName + "-" + UUID.randomUUID();

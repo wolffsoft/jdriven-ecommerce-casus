@@ -13,4 +13,5 @@ public record PriceSyncRequest(
         @NotNull @Min(0) Long priceInCents,
         @NotBlank String currency,
         @NotNull Instant effectiveAt,
-        String source) {}
+        String source
+) {}

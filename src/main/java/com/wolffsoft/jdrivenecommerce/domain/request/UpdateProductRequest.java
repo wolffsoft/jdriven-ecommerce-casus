@@ -6,4 +6,4 @@ public record UpdateProductRequest(
         String name,
         String description,
         Map<String, String> attributes
-){}
+) {}
