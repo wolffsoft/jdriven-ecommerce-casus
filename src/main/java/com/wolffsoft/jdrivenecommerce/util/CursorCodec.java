@@ -47,8 +47,8 @@ public class CursorCodec {
             }
 
             List<FieldValue> out = new ArrayList<>(node.size());
-            for (JsonNode el : node) {
-                out.add(jsonNodeToFieldValue(el));
+            for (JsonNode jsonNode : node) {
+                out.add(jsonNodeToFieldValue(jsonNode));
             }
             return out;
 
@@ -73,15 +73,14 @@ public class CursorCodec {
         };
     }
 
-    private FieldValue jsonNodeToFieldValue(JsonNode el) {
-        return switch (el.getNodeType()) {
+    private FieldValue jsonNodeToFieldValue(JsonNode jsonNode) {
+        return switch (jsonNode.getNodeType()) {
             case NULL -> FieldValue.NULL;
-            case STRING -> FieldValue.of(el.asText());
-            case BOOLEAN -> FieldValue.of(el.asBoolean());
+            case STRING -> FieldValue.of(jsonNode.asText());
+            case BOOLEAN -> FieldValue.of(jsonNode.asBoolean());
             case NUMBER -> {
-                if (el.isIntegralNumber()) yield FieldValue.of(el.asLong());
-                if (el.isFloatingPointNumber()) yield FieldValue.of(el.asDouble());
-                throw new IllegalArgumentException("Invalid cursor: unsupported numeric element " + el.asText());
+                if (jsonNode.isIntegralNumber()) yield FieldValue.of(jsonNode.asLong());
+                if (jsonNode.isFloatingPointNumber()) yield FieldValue.of(jsonNode.asDouble());
                 throw new IllegalArgumentException(String.format("Invalid cursor: unsupported numeric element %s",
                         jsonNode.asText()));
             }

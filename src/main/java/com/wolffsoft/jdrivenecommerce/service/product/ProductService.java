@@ -214,7 +214,7 @@ public class ProductService {
         );
     }
 
-    private static <T> boolean applyIfNonNull(T value, java.util.function.Consumer<T> setter) {
+    private static <T> boolean applyIfNonNull(T value, Consumer<T> setter) {
         if (value == null) {
             return false;
         }

@@ -26,7 +26,7 @@ public class ElasticSearchIndexInitializer implements ApplicationRunner {
     private int maxAttempts;
 
     @Value("${app.search.index.init.delayMs:1000}")
-    private long delayMs;
+    private long delayMilliSeconds;
 
     private final ElasticsearchClient elasticsearchClient;
 
@@ -57,14 +57,14 @@ public class ElasticSearchIndexInitializer implements ApplicationRunner {
                 log.warn("Attempt {}/{} to initialize Elasticsearch index [{}] failed: {}",
                         attempt, maxAttempts, indexName, ex.getMessage());
 
-                sleep(delayMs);
+                sleep(delayMilliSeconds);
             }
         }
     }
 
     private boolean indexExists() throws IOException {
         return elasticsearchClient.indices()
-                .exists(req -> req.index(indexName))
+                .exists(existsRequest -> existsRequest.index(indexName))
                 .value();
     }
 
@@ -82,7 +82,7 @@ public class ElasticSearchIndexInitializer implements ApplicationRunner {
     private static void sleep(long delayMs) {
         try {
             Thread.sleep(delayMs);
-        } catch (InterruptedException ie) {
+        } catch (InterruptedException ex) {
             Thread.currentThread().interrupt();
             throw new RuntimeException("Interrupted while waiting to retry Elasticsearch initialization", ex);
         }

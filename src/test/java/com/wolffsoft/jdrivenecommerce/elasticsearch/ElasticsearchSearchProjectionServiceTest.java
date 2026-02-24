@@ -43,14 +43,14 @@ class ElasticsearchSearchProjectionServiceTest {
     private ElasticsearchClient elasticsearchClient;
 
     @InjectMocks
-    private ElasticsearchSearchProjectionService service;
+    private ElasticsearchSearchProjectionService projectionService;
 
     @Captor
     private ArgumentCaptor<Function> fnCaptor;
 
     @BeforeEach
     void setUp() {
-        ReflectionTestUtils.setField(service, "indexName", "products");
+        ReflectionTestUtils.setField(projectionService, "indexName", "products");
     }
 
     @Test
@@ -72,7 +72,7 @@ class ElasticsearchSearchProjectionServiceTest {
 
         when(elasticsearchClient.index(any(Function.class))).thenReturn(mock(IndexResponse.class));
 
-        service.upsertProduct(event);
+        projectionService.upsertProduct(event);
 
         verify(elasticsearchClient).index(fnCaptor.capture());
 
@@ -107,7 +107,7 @@ class ElasticsearchSearchProjectionServiceTest {
 
         when(elasticsearchClient.index(any(Function.class))).thenThrow(new IOException("boom"));
 
-        assertThatThrownBy(() -> service.upsertProduct(event))
+        assertThatThrownBy(() -> projectionService.upsertProduct(event))
                 .isInstanceOf(ElasticSearchFailedUpsertException.class);
     }
 
@@ -124,7 +124,7 @@ class ElasticsearchSearchProjectionServiceTest {
                 null
         );
 
-        service.partialUpdateProduct(event);
+        projectionService.partialUpdateProduct(event);
 
         verify(elasticsearchClient, never()).update(any(Function.class), any());
     }
@@ -146,7 +146,7 @@ class ElasticsearchSearchProjectionServiceTest {
 
         when(elasticsearchClient.update(any(Function.class), eq(Object.class))).thenReturn(mock(UpdateResponse.class));
 
-        service.partialUpdateProduct(event);
+        projectionService.partialUpdateProduct(event);
 
         verify(elasticsearchClient).update(fnCaptor.capture(), eq(Object.class));
 
@@ -182,13 +182,13 @@ class ElasticsearchSearchProjectionServiceTest {
 
         when(elasticsearchClient.update(any(Function.class), eq(Object.class))).thenThrow(new IOException("boom"));
 
-        assertThatThrownBy(() -> service.partialUpdateProduct(event))
+        assertThatThrownBy(() -> projectionService.partialUpdateProduct(event))
                 .isInstanceOf(ElasticSearchFailedUpdateException.class);
     }
 
     @Test
     @DisplayName("buildUpdatePrice: updates price and currency with docAsUpsert=true")
-    void buildUpdatePriceUpdatesPriceAndCurrency() throws Exception {
+    void updatePriceUpdatesPriceAndCurrency() throws Exception {
         String productId = UUID.randomUUID().toString();
 
         ProductPriceUpdatedEvent event = new ProductPriceUpdatedEvent(
@@ -203,7 +203,7 @@ class ElasticsearchSearchProjectionServiceTest {
 
         when(elasticsearchClient.update(any(Function.class), eq(Object.class))).thenReturn(mock(UpdateResponse.class));
 
-        service.buildUpdatePrice(event);
+        projectionService.updatePrice(event);
 
         verify(elasticsearchClient).update(fnCaptor.capture(), eq(Object.class));
 
@@ -226,7 +226,7 @@ class ElasticsearchSearchProjectionServiceTest {
     void deleteProductDeletesById() throws Exception {
         when(elasticsearchClient.delete(any(Function.class))).thenReturn(mock(DeleteResponse.class));
 
-        service.deleteProduct("p-1");
+        projectionService.deleteProduct("p-1");
 
         verify(elasticsearchClient).delete(fnCaptor.capture());
 

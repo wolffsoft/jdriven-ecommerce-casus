@@ -36,8 +36,8 @@ public class ElasticSearchConfig {
                 .toArray(HttpHost[]::new);
 
         return RestClient.builder(hosts)
-                .setHttpClientConfigCallback(cb -> cb.setDefaultCredentialsProvider(basicCredentialsProvider))
-                .build();
+                .setHttpClientConfigCallback(clientBuilder ->
+                        clientBuilder.setDefaultCredentialsProvider(basicCredentialsProvider)).build();
     }
 
     @Bean(destroyMethod = "close")

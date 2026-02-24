@@ -65,7 +65,7 @@ public class ProductEventsListener {
         log.info("Consumed ProductPriceUpdatedEvent productId={} partition={} offset={}",
                 event.getProductId(), partition, offset);
 
-        projectionService.buildUpdatePrice(event);
+        projectionService.updatePrice(event);
 
         ack.acknowledge();
     }
@@ -91,12 +91,13 @@ public class ProductEventsListener {
      * Kafka will retry depending on the container/error handler settings.
      */
     @KafkaHandler(isDefault = true)
-    public void onUnknown(Object unknown) {
-        ClassLoader payloadCl = unknown == null ? null : unknown.getClass().getClassLoader();
+    public void onUnknown(Object unknownEvent) {
+        ClassLoader payloadCl = unknownEvent == null ? null : unknownEvent.getClass().getClassLoader();
         ClassLoader expectedCl = ProductPriceUpdatedEvent.class.getClassLoader();
 
+        String unknown = unknownEvent == null ? "null" : unknownEvent.getClass().getName();
         log.warn("UNKNOWN payloadType={} payloadClassLoader={} expectedPriceUpdateClassLoader={}",
-                unknown == null ? "null" : unknown.getClass().getName(),
+                unknown,
                 payloadCl,
                 expectedCl);
 
