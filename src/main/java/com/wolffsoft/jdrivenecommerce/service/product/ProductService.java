@@ -94,7 +94,8 @@ public class ProductService {
         ProductEntity product = getProductOrThrow(productId);
 
         if (!product.getCurrency().equals(request.currency())) {
-            throw new CurrencyMismatchException(String.format("Currency mismatch for product with id [%s]", product.getId()));
+            throw new CurrencyMismatchException(String.format("Currency mismatch for product with id [%s]",
+                    product.getId()));
         }
 
         long oldPriceCents = product.getPriceInCents();

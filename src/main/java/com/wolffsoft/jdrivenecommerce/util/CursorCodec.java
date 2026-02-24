@@ -68,9 +68,8 @@ public class CursorCodec {
             case Double -> fieldValue.doubleValue();
             case Boolean -> fieldValue.booleanValue();
             case Null -> null;
-            default -> throw new IllegalArgumentException(
-                    "Unsupported sort cursor value type [" + fieldValue._kind() + "]"
-            );
+            default -> throw new IllegalArgumentException(String.format("Unsupported sort cursor value type [%s]",
+                    fieldValue._kind()));
         };
     }
 
@@ -83,10 +82,11 @@ public class CursorCodec {
                 if (el.isIntegralNumber()) yield FieldValue.of(el.asLong());
                 if (el.isFloatingPointNumber()) yield FieldValue.of(el.asDouble());
                 throw new IllegalArgumentException("Invalid cursor: unsupported numeric element " + el.asText());
+                throw new IllegalArgumentException(String.format("Invalid cursor: unsupported numeric element %s",
+                        jsonNode.asText()));
             }
-            default -> throw new IllegalArgumentException(
-                    "Invalid cursor: unsupported element type [" + el.getNodeType() + "]"
-            );
+            default -> throw new IllegalArgumentException(String.format("Invalid cursor: unsupported element type [%s]",
+                    jsonNode.getNodeType()));
         };
     }
 }

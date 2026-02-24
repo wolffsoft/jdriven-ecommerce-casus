@@ -50,8 +50,8 @@ public class ElasticSearchIndexInitializer implements ApplicationRunner {
             } catch (IOException ex) {
                 if (attempt == maxAttempts) {
                     throw new ElasticSearchIndicesExistsException(
-                            "Failed to initialize Elasticsearch index [" + indexName + "] after "
-                                    + maxAttempts + " attempts.", ex);
+                            String.format("Failed to initialize Elasticsearch index [%s] after [%s] attempts",
+                                    indexName, maxAttempts), ex);
                 }
 
                 log.warn("Attempt {}/{} to initialize Elasticsearch index [{}] failed: {}",
@@ -84,7 +84,7 @@ public class ElasticSearchIndexInitializer implements ApplicationRunner {
             Thread.sleep(delayMs);
         } catch (InterruptedException ie) {
             Thread.currentThread().interrupt();
-            throw new RuntimeException("Interrupted while waiting to retry Elasticsearch initialization", ie);
+            throw new RuntimeException("Interrupted while waiting to retry Elasticsearch initialization", ex);
         }
     }
 

@@ -74,8 +74,8 @@ public class ReIndexService {
                 if (resp.errors()) {
                     throw new IllegalStateException("Bulk indexing had errors");
                 }
-            } catch (Exception e) {
-                throw new RuntimeException("Bulk indexing failed on page " + page, e);
+            } catch (Exception ex) {
+                throw new RuntimeException(String.format("Bulk indexing failed on page %s", page), ex);
             }
 
             totalIndexed += slice.getNumberOfElements();
@@ -84,8 +84,8 @@ public class ReIndexService {
 
         try {
             elasticsearchClient.indices().refresh(r -> r.index(indexName));
-        } catch (Exception e) {
-            throw new RuntimeException("Failed to refresh index " + indexName, e);
+        } catch (Exception ex) {
+            throw new RuntimeException(String.format("Failed to refresh index %s", indexName), ex);
         }
 
         return new ReindexResult(totalIndexed);

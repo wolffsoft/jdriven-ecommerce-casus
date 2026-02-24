@@ -100,7 +100,6 @@ public class ProductEventsListener {
                 payloadCl,
                 expectedCl);
 
-        throw new IllegalArgumentException("Unsupported event type: " +
-                (unknown == null ? "null" : unknown.getClass().getName()));
+        throw new IllegalArgumentException(String.format("Unsupported event type: %s", unknown));
     }
 }
