@@ -1,0 +1,11 @@
+POST http://localhost:8080/price-integration/prices
+Content-Type: application/json
+
+{
+  "requestId": "req-0004",
+  "productId": "b9153eae-ae78-4458-a5e9-888d834cfbdc",
+  "priceInCents": 123456789,
+  "currency": "EUR",
+  "effectiveAt": "2026-02-23T21:05:00Z",
+  "source": "price-integration"
+}

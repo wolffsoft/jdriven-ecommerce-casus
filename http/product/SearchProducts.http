@@ -1,0 +1,4 @@
+GET http://localhost:8080/products/search?query=Tesslalala&size=20
+
+###
+GET http://localhost:8080/products/search?query=shoe&size=20&cursor=YOUR_CURSOR_HERE

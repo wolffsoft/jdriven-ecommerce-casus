@@ -1,0 +1,7 @@
+PATCH http://localhost:8080/products/0d436052-0c3c-4e95-b23a-51c093a2c72a/price
+Content-Type: application/json
+
+{
+  "price": 123,
+  "currency": "EUR"
+}
