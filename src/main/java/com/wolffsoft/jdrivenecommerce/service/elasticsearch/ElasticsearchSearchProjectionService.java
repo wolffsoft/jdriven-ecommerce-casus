@@ -82,7 +82,7 @@ public class ElasticsearchSearchProjectionService implements SearchProjectionSer
     }
 
     @Override
-    public void buildUpdatePrice(ProductPriceUpdatedEvent event) {
+    public void updatePrice(ProductPriceUpdatedEvent event) {
         try {
             Map<String, Object> updatePrice = createUpdateProductPrice(event);
 
@@ -102,7 +102,7 @@ public class ElasticsearchSearchProjectionService implements SearchProjectionSer
     @Override
     public void deleteProduct(String productId) {
         try {
-            elasticsearchClient.delete(d -> d
+            elasticsearchClient.delete(deleteRequest -> deleteRequest
                     .index(indexName)
                     .id(productId));
         } catch (IOException ex) {

@@ -57,7 +57,7 @@ public class ReIndexService {
                         buildAttributesText(attrs)
                 );
 
-                bulk.operations(op -> op
+                bulk.operations(bulkOperation -> bulkOperation
                         .index(i -> i
                                 .index(indexName)
                                 .id(doc.id())
