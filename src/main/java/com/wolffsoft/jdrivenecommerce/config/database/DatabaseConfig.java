@@ -15,14 +15,14 @@ public class DatabaseConfig {
     @Primary
     @Bean
     @ConfigurationProperties(prefix = "spring.datasource")
-    DataSource dataSource() {
+    public DataSource dataSource() {
         return DataSourceBuilder.create().build();
     }
 
     @FlywayDataSource
     @Bean
     @ConfigurationProperties(prefix = "spring.flyway")
-    DataSource flywayDataSource() {
+    public DataSource flywayDataSource() {
        return DataSourceBuilder.create().build();
     }
 }
