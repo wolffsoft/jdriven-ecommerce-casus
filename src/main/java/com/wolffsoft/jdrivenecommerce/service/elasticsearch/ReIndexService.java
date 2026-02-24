@@ -67,8 +67,8 @@ public class ReIndexService {
             }
 
             try {
-                var resp = elasticsearchClient.bulk(bulk.build());
-                if (resp.errors()) {
+                BulkResponse response = elasticsearchClient.bulk(bulk.build());
+                if (response.errors()) {
                     throw new IllegalStateException("Bulk indexing had errors");
                 }
             } catch (Exception ex) {
