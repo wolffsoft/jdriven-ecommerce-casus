@@ -196,7 +196,7 @@ class ProductSearchServiceTest {
         );
 
         TotalHits total = TotalHits.of(t -> t
-                .value((long) hits.size())
+                .value(hits.size())
                 .relation(TotalHitsRelation.Eq)
         );
 
@@ -205,7 +205,7 @@ class ProductSearchServiceTest {
                 .hits(hits)
         );
 
-        return SearchResponse.<ProductSearchDocument>of(r -> r
+        return SearchResponse.of(r -> r
                 .took(1)
                 .timedOut(false)
                 .shards(shards)
