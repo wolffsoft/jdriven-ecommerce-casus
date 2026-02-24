@@ -1,0 +1,180 @@
+services:
+  kafka:
+    image: confluentinc/confluent-local:8.1.1
+    container_name: catalog-kafka
+    ports:
+      - "9092:9092"
+      - "29092:29092"
+    environment:
+      KAFKA_INTER_BROKER_LISTENER_NAME: "INTERNAL"
+      KAFKA_LISTENERS: "INTERNAL://kafka:29092, EXTERNAL://0.0.0.0:9092,CONTROLLER://localhost:29093"
+      KAFKA_ADVERTISED_LISTENERS: "INTERNAL://kafka:29092, EXTERNAL://localhost:9092"
+      KAFKA_LISTENER_SECURITY_PROTOCOL_MAP: "INTERNAL:PLAINTEXT,EXTERNAL:PLAINTEXT,CONTROLLER:PLAINTEXT"
+
+  akhq:
+    image: tchiotludo/akhq
+    container_name: catalog-akhq
+    environment:
+      AKHQ_CONFIGURATION: |
+        akhq:
+          connections:
+            docker-kafka-server:
+              properties:
+                bootstrap.servers: "kafka:29092"
+              schema-registry:
+                url: "http://schema-registry:8081"
+              connect:
+                - name: "connect"
+                  url: "http://connect:8083"
+    ports:
+      - "8090:8080"
+    links:
+      - kafka
+      - schema-registry
+
+  schema-registry:
+    image: confluentinc/cp-schema-registry:8.1.1
+    container_name: catalog-schema-registry
+    ports:
+      - "8081:8081"
+    environment:
+      SCHEMA_REGISTRY_KAFKASTORE_BOOTSTRAP_SERVERS: "PLAINTEXT://kafka:29092"
+      SCHEMA_REGISTRY_HOST_NAME: "schemaregistry"
+      SCHEMA_REGISTRY_LISTENERS: "http://0.0.0.0:8081"
+    depends_on:
+      - kafka
+    healthcheck:
+      test: [ "CMD", "curl", "-f", "http://localhost:8081/subjects" ]
+      interval: 5s
+      timeout: 10s
+      retries: 5
+
+  schema-loader:
+    image: alpine:3.23
+    container_name: catalog-schema-loader
+    depends_on:
+      schema-registry:
+        condition: service_healthy
+    volumes:
+      - ./sh/schema-loader.sh:/schema-loader.sh:ro
+      - ../src/main/resources/avro/product-created-event.v1-value.avsc:/schemas/product-created-event.avsc
+      - ../src/main/resources/avro/product-updated-event.v1-value.avsc:/schemas/product-updated-event.avsc
+      - ../src/main/resources/avro/product-price-updated-event.v1-value.avsc:/schemas/product-price-updated-event.avsc
+      - ../src/main/resources/avro/product-deleted-event.v1-value.avsc:/schemas/product-deleted-event.avsc
+    command: ["/bin/sh", "/schema-loader.sh"]
+
+  postgresdb:
+    image: postgres:16
+    container_name: catalog-postgres
+    ports:
+      - "5432:5432"
+    restart: always
+    environment:
+      POSTGRES_USER: ${POSTGRES_USER}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
+      POSTGRES_DB: ${POSTGRES_DB}
+    volumes:
+      - ./init-db-scripts/init-db-user.sql:/docker-entrypoint-initdb.d/init-db-user.sql
+      - pg_data:/var/lib/postgresql/data
+    healthcheck:
+      test: [ "CMD-SHELL", "pg_isready -U ${POSTGRES_USER} -d ${POSTGRES_DB}" ]
+      interval: 5s
+      timeout: 3s
+      retries: 20
+
+  kafka-init:
+    image: confluentinc/cp-kafka:8.1.1
+    container_name: catalog-kafka-init
+    depends_on:
+      - kafka
+    volumes:
+      - ./sh/kafka-init.sh:/kafka-init.sh:ro
+    entrypoint: ["/bin/bash", "/kafka-init.sh"]
+    restart: "no"
+
+  elasticsearch:
+    image: docker.elastic.co/elasticsearch/elasticsearch:9.2.5
+    container_name: catalog-elasticsearch
+    environment:
+      discovery.type: single-node
+      xpack.security.enabled: "true"
+      xpack.security.http.ssl.enabled: "false"
+      xpack.security.transport.ssl.enabled: "false"
+      ELASTIC_PASSWORD: ${ELASTIC_PASSWORD}
+    ports:
+      - "9200:9200"
+    volumes:
+      - es_data:/usr/share/elasticsearch/data
+    healthcheck:
+      test: [ "CMD-SHELL", "curl -fsS -u elastic:${ELASTIC_PASSWORD} http://localhost:9200 >/dev/null || exit 1" ]
+      interval: 5s
+      timeout: 5s
+      retries: 40
+
+  es-security-init:
+    image: curlimages/curl:8.6.0
+    container_name: catalog-es-security-init
+    depends_on:
+      elasticsearch:
+        condition: service_healthy
+    environment:
+      ELASTIC_PASSWORD: ${ELASTIC_PASSWORD}
+      APP_ES_USERNAME: ${APP_ES_USERNAME}
+      APP_ES_PASSWORD: ${APP_ES_PASSWORD}
+      APP_ES_INDEX_PATTERN: ${APP_ES_INDEX_PATTERN}
+    volumes:
+      - ./sh/es-security-init.sh:/es-security-init.sh:ro
+    command: ["/bin/sh", "/es-security-init.sh"]
+    restart: "no"
+
+  kibana-token-init:
+    image: curlimages/curl:8.6.0
+    container_name: catalog-kibana-token-init
+    user: "0:0"
+    depends_on:
+      elasticsearch:
+        condition: service_healthy
+    environment:
+      ELASTIC_PASSWORD: ${ELASTIC_PASSWORD}
+    volumes:
+      - es_bootstrap:/bootstrap
+      - ./sh/kibana-token-init.sh:/kibana-token-init.sh:ro
+    command: ["/bin/sh", "/kibana-token-init.sh"]
+    restart: "no"
+
+  kibana-init:
+    user: "0:0"
+    image: docker.elastic.co/kibana/kibana:9.2.5
+    container_name: catalog-kibana-init
+    depends_on:
+      kibana-token-init:
+        condition: service_completed_successfully
+    volumes:
+      - kibana_config:/usr/share/kibana/config
+      - es_bootstrap:/bootstrap:ro
+      - ./sh/kibana-init.sh:/kibana-init.sh:ro
+    command: ["/bin/sh", "/kibana-init.sh"]
+    restart: "no"
+
+  kibana:
+    image: docker.elastic.co/kibana/kibana:9.2.5
+    container_name: catalog-kibana
+    depends_on:
+      kibana-init:
+        condition: service_completed_successfully
+    volumes:
+      - kibana_config:/usr/share/kibana/config
+      - ./kibana.yml:/usr/share/kibana/config/kibana.yml:ro
+    ports:
+      - "5601:5601"
+    healthcheck:
+      test: [ "CMD-SHELL", "curl -fsS http://localhost:5601/api/status >/dev/null || exit 1" ]
+      interval: 10s
+      timeout: 5s
+      retries: 30
+
+volumes:
+  pg_data:
+  es_data:
+  kibana_config:
+  es_bootstrap:
