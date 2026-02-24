@@ -60,9 +60,9 @@ public final class JsonUtil {
             writer.write(record, encoder);
             encoder.flush();
             return out.toString(StandardCharsets.UTF_8);
-        } catch (IOException e) {
-            throw new IllegalStateException(
-                    "Failed to Avro-JSON encode record: " + schema.getFullName(), e);
+        } catch (IOException ex) {
+            throw new IllegalStateException(String.format("Failed to Avro-JSON encode record: %s",
+                    schema.getFullName()), ex);
         }
     }
 
@@ -76,8 +76,7 @@ public final class JsonUtil {
 
             return reader.read(null, decoder);
         } catch (Exception e) {
-            throw new IllegalStateException(
-                    "Failed to Avro-JSON decode into: " + clazz.getName(), e);
+            throw new IllegalStateException(String.format("Failed to Avro-JSON decode into: %s", clazz.getName()), e);
         }
     }
 
