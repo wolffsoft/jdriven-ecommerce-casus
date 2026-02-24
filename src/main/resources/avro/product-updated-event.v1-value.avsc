@@ -1,0 +1,54 @@
+{
+  "type": "record",
+  "name": "ProductUpdatedEvent",
+  "namespace": "com.wolffsoft.catalog.events",
+  "doc": "Emitted when product metadata is updated (partial update supported)",
+  "fields": [
+    {
+      "name": "eventId",
+      "type": "string"
+    },
+    {
+      "name": "eventVersion",
+      "type": "int"
+    },
+    {
+      "name": "occurredAt",
+      "type": {
+        "type": "long",
+        "logicalType": "timestamp-millis"
+      }
+    },
+    {
+      "name": "productId",
+      "type": "string"
+    },
+    {
+      "name": "name",
+      "type": [
+        "null",
+        "string"
+      ],
+      "default": null
+    },
+    {
+      "name": "description",
+      "type": [
+        "null",
+        "string"
+      ],
+      "default": null
+    },
+    {
+      "name": "attributes",
+      "type": [
+        "null",
+        {
+          "type": "map",
+          "values": "string"
+        }
+      ],
+      "default": null
+    }
+  ]
+}

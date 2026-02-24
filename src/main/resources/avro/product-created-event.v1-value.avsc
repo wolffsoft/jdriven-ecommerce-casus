@@ -1,0 +1,53 @@
+{
+  "type": "record",
+  "name": "ProductCreatedEvent",
+  "namespace": "com.wolffsoft.catalog.events",
+  "doc": "Emitted when a new product is created",
+  "fields": [
+    {
+      "name": "eventId",
+      "type": "string"
+    },
+    {
+      "name": "eventVersion",
+      "type": "int"
+    },
+    {
+      "name": "occurredAt",
+      "type": {
+        "type": "long",
+        "logicalType": "timestamp-millis"
+      }
+    },
+    {
+      "name": "productId",
+      "type": "string"
+    },
+    {
+      "name": "name",
+      "type": "string"
+    },
+    {
+      "name": "description",
+      "type": "string"
+    },
+    {
+      "name": "priceInCents",
+      "type": "long",
+      "doc": "Price in minor units (e.g. cents)"
+    },
+    {
+      "name": "currency",
+      "type": "string",
+      "doc": "ISO currency code (EUR, USD)"
+    },
+    {
+      "name": "attributes",
+      "type": {
+        "type": "map",
+        "values": "string"
+      },
+      "default": {}
+    }
+  ]
+}

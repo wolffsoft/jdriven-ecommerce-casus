@@ -1,0 +1,12 @@
+PUT http://localhost:8080/products/0d436052-0c3c-4e95-b23a-51c093a2c72a
+Content-Type: application/json
+
+{
+  "name": "Tesla Model S Plaid",
+  "description": "Updated description 1",
+  "currency": "EUR",
+  "attributes": {
+    "color": "red",
+    "paint": "metallic"
+  }
+}

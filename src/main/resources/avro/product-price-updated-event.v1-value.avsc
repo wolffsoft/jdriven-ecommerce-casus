@@ -1,0 +1,39 @@
+{
+  "type": "record",
+  "name": "ProductPriceUpdatedEvent",
+  "namespace": "com.wolffsoft.catalog.events",
+  "doc": "Emitted when a product price changes",
+  "fields": [
+    {
+      "name": "eventId",
+      "type": "string"
+    },
+    {
+      "name": "eventVersion",
+      "type": "int"
+    },
+    {
+      "name": "occurredAt",
+      "type": {
+        "type": "long",
+        "logicalType": "timestamp-millis"
+      }
+    },
+    {
+      "name": "productId",
+      "type": "string"
+    },
+    {
+      "name": "oldPriceInCents",
+      "type": "long"
+    },
+    {
+      "name": "newPriceInCents",
+      "type": "long"
+    },
+    {
+      "name": "currency",
+      "type": "string"
+    }
+  ]
+}
