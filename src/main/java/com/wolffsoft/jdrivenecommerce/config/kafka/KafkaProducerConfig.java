@@ -23,7 +23,6 @@ public class KafkaProducerConfig {
             @Value("${spring.kafka.properties.schema.registry.url}") String schemaRegistryUrl) {
 
         Map<String, Object> properties = baseProducerProps(bootstrapServers, schemaRegistryUrl);
-        // Your normal producer can keep defaults or also use TopicRecordNameStrategy if you want.
         return new DefaultKafkaProducerFactory<>(properties);
     }
 
@@ -33,10 +32,6 @@ public class KafkaProducerConfig {
         return new KafkaTemplate<>(producerFactory);
     }
 
-    /**
-     * DLT producer uses TopicRecordNameStrategy so multiple event record types
-     * can coexist on the same DLT topic without colliding on '<topic>-value'.
-     */
     @Bean
     public ProducerFactory<String, Object> dltProducerFactory(
             @Value("${spring.kafka.bootstrap-servers}") String bootstrapServers,

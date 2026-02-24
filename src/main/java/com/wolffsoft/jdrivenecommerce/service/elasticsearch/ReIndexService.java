@@ -27,10 +27,6 @@ public class ReIndexService {
     @Value("${app.search.index:products}")
     private String indexName;
 
-    /**
-     * Rebuild the full ES index from Postgres (source of truth).
-     * Uses bulk indexing for speed.
-     */
     public ReindexResult reindexAll(int batchSize) {
         int size = Math.max(100, Math.min(batchSize, 2000));
         long totalIndexed = 0;

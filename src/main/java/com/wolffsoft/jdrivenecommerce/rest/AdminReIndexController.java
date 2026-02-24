@@ -14,10 +14,6 @@ public class AdminReIndexController {
 
     private final ReIndexService reIndexService;
 
-    /**
-     * Triggers a rebuild of the ES index from Postgres.
-     * Example: POST /admin/reindex?batchSize=1000
-     */
     @PostMapping("/reindex")
     public ReIndexService.ReindexResult reindex(
             @RequestParam(value = "batchSize", defaultValue = "1000") int batchSize
